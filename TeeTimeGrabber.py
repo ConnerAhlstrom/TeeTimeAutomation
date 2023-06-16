@@ -33,11 +33,20 @@ iframe = WebDriverWait(driver, 10).until(EC.frame_to_be_available_and_switch_to_
 print("Successfully switched to iFrame")
 
 #Calendar Button - Select Date
-saturday_parent_element = driver.find_element(By.XPATH, '//div[@class="react-calendar__month-view__days"]')
-saturday_button = saturday_parent_element.find_element(By.XPATH, './button[21]')
-saturday_button.click()
-print("Successfuly Selected Date") 
-time.sleep(2)
+todays_date = datetime.now();
+delta = (5 - todays_date.weekday()) %7
+next_saturday = todays_date + timedelta(days=delta)
+desired_time = next_saturday.replace(hour = 3, minute= 30, second=0 )
+
+time_wait = WebDriverWait(driver, 10)
+time_elements = time_wait.until(EC.visibility_of_all_elements_located((By.CSS_SELECTOR, "p.jss86[data-testid='teetimes-tile-time']")))
+
+for time_element in time_elements:
+    time_text = time_element.text
+    if time_text =="3:30 PM":
+        button = time_element.find_element(By.XPATH, "following-sibling::button")
+        button.click()
+        break
 
 #Select the time 
 tee_time = driver.find_element(By. XPATH, '//*[@id="app-container"]/div/div[2]/div/div[2]/div[2]/div/div[4]/div/button')
